@@ -1,0 +1,53 @@
+---
+title: "Kanzel Sunspot Data"
+author: "David J Jackson"
+date: "6/26/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,fig.width=9, fig.height=6)
+library(tidyverse)
+library(lubridate)
+theme_set(theme_light())
+```
+
+### Pull in data and remove unneeded fields
+
+```{r}
+rm(list=ls())
+kanzel <- read_csv("../db/kh_spots.csv")
+kanzel <- kanzel %>% select(-a,-qu,-obs,-X14,-hhmm)
+```
+
+### Quick plot of R North & R South Jan. 2014 - Present
+
+```{r}
+kanzel %>% filter(Ymd >="2014-01-01") %>%
+  ggplot() + geom_line(aes(x=Ymd,y=R_n,col="ISN North")) +
+  geom_line(aes(x=Ymd,y=R_s,col="ISN South")) +
+  labs(title="Kanzel Daily North/South ISN: 2014 - Present",
+       x="Date of Observations",y="Daily ISN")
+```
+
+### Calculate Weekly Mean and Medians for All North and South ISN Fields
+
+```{r}
+K2 <- kanzel %>% group_by(Weekly = floor_date(Ymd,"week")) %>%
+        summarise(across(g_n:Rr, list(Mean = mean, Median = median)))
+        
+```
+```{r}
+K2 %>% filter(Weekly >="2014-01-01") %>%
+  ggplot() + geom_line(aes(x=Weekly,y=R_n_Mean,col="ISN North")) +
+  geom_line(aes(x=Weekly,y=R_s_Mean,col="ISN South")) +
+  labs(title="Kanzel Weekly Mean North/South ISN: 2014 - Present",
+       x="Weekly Dates",y="Weekly Mean ISN")
+```
+```{r}
+K2 %>% filter(Weekly >="2014-01-01") %>%
+  ggplot() + geom_line(aes(x=Weekly,y=R_n_Median,col="ISN North")) +
+  geom_line(aes(x=Weekly,y=R_s_Median,col="ISN South")) +
+  labs(title="Kanzel Weekly  Median North/South ISN: 2014 - Present",
+       x="Weekly Dates",y="Weekly Median ISN")
+```
