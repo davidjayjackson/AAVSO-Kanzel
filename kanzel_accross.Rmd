@@ -18,7 +18,7 @@ theme_set(theme_light())
 
 ```{r}
 rm(list=ls())
-kanzel <- read_csv("../db/kh_spots.csv")
+kanzel <- read_csv("./kh_spots.csv")
 kanzel <- kanzel %>% select(-a,-qu,-obs,-X14,-hhmm)
 ```
 
@@ -53,3 +53,18 @@ K2 %>% filter(Weekly >="2014-01-01") %>%
   labs(title="Kanzel Weekly  Median North/South ISN: 2014 - Present",
        x="Weekly Dates",y="Weekly Median ISN")
 ```
+
+### Calculate and Plot 7 Day Exponential MOving Average: North/South ISN
+
+```{r}
+kanzel$RNorth <- movavg(kanzel$R_n,7,"e")
+kanzel$RSouth <- movavg(kanzel$R_s,7,"e")
+K3 <- kanzel %>% filter(Ymd >="2014-01-01")
+```
+```{r}
+K3 %>% ggplot() + geom_line(aes(x=Ymd,y=RNorth,col="North")) +
+        geom_line(aes(x=Ymd,y=RSouth,col="South")) +
+        labs(title="North/South 7 Day Exponential MOving Average",
+             x="Date of Observation",y="ISN: Moving Average")
+```
+
