@@ -9,7 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE,fig.width=9, fig.height=6)
 library(tidyverse)
 library(lubridate)
+library(pracma)
 theme_set(theme_light())
+
 ```
 
 ### Pull in data and remove unneeded fields
