@@ -26,8 +26,8 @@ kanzel <- kanzel %>% select(-a,-qu,-obs,-X14,-hhmm)
 
 ```{r}
 kanzel %>% filter(Ymd >="2014-01-01") %>%
-  ggplot() + geom_line(aes(x=Ymd,y=R_n,col="ISN North")) +
-  geom_line(aes(x=Ymd,y=R_s,col="ISN South")) +
+  ggplot() + geom_line(aes(x=Ymd,y=R_n,col="ISN North"),col="green") +
+  geom_line(aes(x=Ymd,y=R_s,col="ISN South"),col="blue") +
   labs(title="Kanzel Daily North/South ISN: 2014 - Present",
        x="Date of Observations",y="Daily ISN")
 ```
