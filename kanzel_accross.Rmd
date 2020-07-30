@@ -1,7 +1,7 @@
 ---
 title: "Kanzel Sunspot Data"
 author: "David J Jackson"
-date: "6/26/2020"
+date: "6/27/2020"
 output: html_document
 ---
 
@@ -54,17 +54,29 @@ K2 %>% filter(Weekly >="2014-01-01") %>%
        x="Weekly Dates",y="Weekly Median ISN")
 ```
 
-### Calculate and Plot 7 Day Exponential MOving Average: North/South ISN
+### Calculate and Plot 60 Day Exponential MOving Average: North/South ISN
+#### Current Solar Minimum Jan. 2014 - Present
 
 ```{r}
-kanzel$RNorth <- movavg(kanzel$R_n,7,"e")
-kanzel$RSouth <- movavg(kanzel$R_s,7,"e")
+kanzel$RNorth <- movavg(kanzel$R_n,60,"e")
+kanzel$RSouth <- movavg(kanzel$R_s,60,"e")
 K3 <- kanzel %>% filter(Ymd >="2014-01-01")
 ```
 ```{r}
 K3 %>% ggplot() + geom_line(aes(x=Ymd,y=RNorth,col="North")) +
         geom_line(aes(x=Ymd,y=RSouth,col="South")) +
-        labs(title="North/South 7 Day Exponential MOving Average",
+        labs(title="North/South 60 Day Exponential MOving Average",
              x="Date of Observation",y="ISN: Moving Average")
 ```
-
+#### Current Solar Minimum: Jan. 2020 - Present
+```{r}
+kanzel$RNorth <- movavg(kanzel$R_n,60,"e")
+kanzel$RSouth <- movavg(kanzel$R_s,60,"e")
+K3 <- kanzel %>% filter(Ymd >="2019-07-01")
+```
+```{r}
+K3 %>% ggplot() + geom_line(aes(x=Ymd,y=RNorth,col="North")) +
+        geom_line(aes(x=Ymd,y=RSouth,col="South")) +
+        labs(title="North/South 60 Day Exponential Moving Average",
+             x="Date of Observation",y="ISN: Moving Average")
+```
