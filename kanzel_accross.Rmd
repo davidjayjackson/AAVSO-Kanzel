@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE,fig.width=9, fig.height=6)
 library(tidyverse)
 library(lubridate)
 library(pracma)
+library(prophet)
 theme_set(theme_light())
 
 ```
@@ -18,7 +19,7 @@ theme_set(theme_light())
 
 ```{r}
 rm(list=ls())
-kanzel <- read_csv("./kh_spots.csv")
+kanzel <- read_csv("../DATA//kh_spots.csv")
 kanzel <- kanzel %>% select(-a,-qu,-obs,-X14,-hhmm)
 ```
 
@@ -68,7 +69,9 @@ K3 %>% ggplot() + geom_line(aes(x=Ymd,y=RNorth,col="North")) +
         labs(title="North/South 60 Day Exponential MOving Average",
              x="Date of Observation",y="ISN: Moving Average")
 ```
+
 #### Current Solar Minimum: Jan. 2020 - Present
+
 ```{r}
 kanzel$RNorth <- movavg(kanzel$R_n,60,"e")
 kanzel$RSouth <- movavg(kanzel$R_s,60,"e")
@@ -80,3 +83,22 @@ K3 %>% ggplot() + geom_line(aes(x=Ymd,y=RNorth,col="North")) +
         labs(title="North/South 60 Day Exponential Moving Average",
              x="Date of Observation",y="ISN: Moving Average")
 ```
+
+### Prphet ISN Predicions
+
+```{r,echo=FALSE}
+kanzel$Spots <- kanzel$s_n + kanzel$s_s
+K4 <- kanzel %>% select(Ymd,Spots)
+colnames(K4) <- c("ds","y")
+
+
+df <-K4 
+m <- prophet(seasonality.mode="multiplicative")
+m <- add_seasonality(m, name="cycle_11year", period=365.25 * 11,fourier.order=5,mode="multiplicative")
+m <- fit.prophet(m, df)
+future <- make_future_dataframe(m,periods=8000,freq="day")
+forecast <- predict(m, future)
+
+```
+```{r}
+plot(m, forecast) +ggtitle("Kanzel Spots Prediction: Jun. 1944 - July. 2020") +ylab("Predicted Sunspots") +xlab("Years" )
